@@ -23,7 +23,11 @@ class _HomeState extends State<Home> {
   selectPhotoFromGallery() async {
     XFile? pickedFile =
         await imagePicker!.pickImage(source: ImageSource.gallery);
-    _image = File(pickedFile!.path);
+    if (pickedFile != null) {
+      _image = File(pickedFile.path);
+    } else {
+      return null;
+    }
     setState(() {
       _image;
       doImageClassification();
@@ -71,7 +75,7 @@ class _HomeState extends State<Home> {
     recognition.forEach((element) {
       setState(() {
         print(element.toString());
-        result += element['label'] + "\n\n";
+        result += element['label'] + "\n";
       });
     });
   }
@@ -79,6 +83,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       backgroundColor: Colors.grey.shade300,
       body: Container(
         decoration: BoxDecoration(
@@ -87,11 +92,13 @@ class _HomeState extends State<Home> {
             fit: BoxFit.cover,
           ),
         ),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(width: 100,),
-              Container(
+        child: Column(
+          children: [
+            SizedBox(
+              width: 70,
+            ),
+            SingleChildScrollView(
+              child: Container(
                 margin: EdgeInsets.only(top: 20),
                 child: Stack(
                   children: [
@@ -100,23 +107,46 @@ class _HomeState extends State<Home> {
                         onPressed: selectPhotoFromGallery,
                         onLongPress: capturePhotoFromCamera,
                         child: Container(
-                          margin: EdgeInsets.only(top: 30,right: 35,left: 18),
-                          child: _image!=null ? Image.file(_image!,height: 360,width: 400, fit: BoxFit.contain,): Container(width: 140,height: 190, child: Icon(Icons.camera_alt_rounded,color: Colors.white,),),
+                          margin: EdgeInsets.only(top: 30, right: 35, left: 18),
+                          child: _image != null
+                              ? Image.file(
+                                  _image!,
+                                  height: 360,
+                                  width: 400,
+                                  fit: BoxFit.contain,
+                                )
+                              : Container(
+                                  width: 140,
+                                  height: 190,
+                                  child: Icon(
+                                    Icons.camera_alt_rounded,
+                                    color: Colors.white,
+                                  ),
+                                ),
                         ),
                       ),
                     ),
                   ],
                 ),
               ),
-        
-              SizedBox(height: 160,),
-              Container(
-                margin: EdgeInsets.only(top: 20.0),
-                child: Text("$result",textAlign: TextAlign.center,style: TextStyle(fontSize: 40,color: Colors.pinkAccent,backgroundColor: Colors.white60),),
+            ),
+            SizedBox(
+              height: 120,
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 20.0),
+              child: Text(
+                "$result",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 40,
+                    color: Colors.pinkAccent,
+                    backgroundColor: Colors.white60),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
+        //),
       ),
     );
   }
