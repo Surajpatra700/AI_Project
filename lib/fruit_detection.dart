@@ -13,11 +13,12 @@ class FruitDetection extends StatefulWidget {
 class _FruitDetectionState extends State<FruitDetection> {
   bool isWorking = false;
   String result = "";
-  CameraController? cameraController;
+  CameraController? cameraController; // cameraController is used for establishing a connection to the device's camera that allows you to control the camera and display a preview of camera's feed.
   CameraImage? imgCamera;
 
   initCamera() {
     // created a camera controller
+    // Usually the camera list is 2, 0 index is for rear camera & 1 index is for front camera 
     cameraController = CameraController(cameras![0], ResolutionPreset.medium);
     // initialized the controller
     cameraController!.initialize().then((value) {
@@ -37,6 +38,7 @@ class _FruitDetectionState extends State<FruitDetection> {
     });
   }
 
+  // Loading Tflite model 
   loadModel() async {
     await Tflite.loadModel(
       model: "assets/files2/model_unquant.tflite",
